@@ -1,10 +1,11 @@
 pipeline {
     agent none
-        environment {
-            ENV_DOCKER = credentials('dockerhub')
-            DOCKERIMAGE = "dummy/dummy"
-            EKS_CLUSTER_NAME = "demo-cluster"
-        }
+    environment {
+        ENV_DOCKER = credentials('dockerhub')
+        DOCKERIMAGE = "dummy/dummy"
+        EKS_CLUSTER_NAME = "demo-cluster"
+        SONAR_TOKEN = credentials('sonar-token')
+    }
     stages {
         stage('build') {
             agent {
@@ -12,14 +13,16 @@ pipeline {
             }
             steps {
                 sh 'chmod +x gradlew && ./gradlew build jacocoTestReport'
+                stash includes: 'build/**/*', name: 'testReport'
             }
         }
         stage('sonarqube') {
             agent {
-                docker { image '<some sonarcli image>' }
+                docker { image 'sonarsource/sonar-scanner-cli:latest' }
             }
             steps {
-                sh 'echo scanning!'
+                unstash 'testReport'
+                sh 'sonar-scanner'
             }
         }
         stage('docker build') {
@@ -34,7 +37,7 @@ pipeline {
         }
         stage('Deploy App') {
             steps {
-                sh 'echo deploy to kubernetes'               
+                sh 'echo deploy to kubernetes'
             }
         }
     }
