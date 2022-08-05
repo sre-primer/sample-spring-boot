@@ -16,7 +16,7 @@ pipeline {
             steps {
                 container('jdk') {
                     sh 'gradle build jacocoTestReport'
-                    sh 'chmod +r build/*'
+                    sh 'chmod -R +r build'
                     stash includes: 'build/**/*', name: 'build'
                 }
             }
@@ -25,7 +25,7 @@ pipeline {
             steps {
                 container('sonar') {
                     unstash 'build'
-                    sh 'chmod +r build/*'
+                    sh 'chmod -R +r build'
                     sh 'sonar-scanner'
                 }
             }
@@ -35,7 +35,7 @@ pipeline {
                 container('docker') {
                     echo 'Starting to build docker image'
                     unstash 'build'
-                    sh 'chmod +r build/*'
+                    sh 'chmod -R +r build'
 
                     script {
                         image = docker.build("$ENV_DOCKER_USR/$DOCKERIMAGE:latest")
