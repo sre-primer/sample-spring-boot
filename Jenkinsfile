@@ -10,7 +10,10 @@ pipeline {
     stages {
         stage('build') {
             agent {
-                docker { image 'openjdk:11-jdk' }
+                kubernetes {
+                    label: 'jenkins-spring'
+                    defaultContainer 'jdk'
+                }
             }
             steps {
                 sh 'chmod +x gradlew && ./gradlew build jacocoTestReport'
@@ -19,7 +22,10 @@ pipeline {
         }
         stage('sonarqube') {
             agent {
-                docker { image 'sonarsource/sonar-scanner-cli:latest' }
+                kubernetes {
+                    label: 'jenkins-spring'
+                    defaultContainer 'sonar'
+                }
             }
             steps {
                 unstash 'build'
@@ -27,7 +33,12 @@ pipeline {
             }
         }
         stage('docker build') {
-            agent any
+            agent {
+                kubernetes {
+                    label: 'jenkins-spring'
+                    defaultContainer 'docker'
+                }
+            }
             steps {
                 echo 'Starting to build docker image'
                 unstash 'build'
@@ -38,7 +49,12 @@ pipeline {
             }
         }
         stage('docker push') {
-            agent any
+            agent {
+                kubernetes {
+                    label: 'jenkins-spring'
+                    defaultContainer 'docker'
+                }
+            }
             steps {
                 echo 'Pushing image to registry'
 
@@ -52,9 +68,9 @@ pipeline {
         }
         stage('Deploy App') {
             agent {
-                docker {
-                    image 'jshimko/kube-tools-aws:3.8.1'
-                    args '-u root --privileged'
+                kubernetes {
+                    label: 'jenkins-spring'
+                    defaultContainer 'kubectl'
                 }
             }
             steps {
