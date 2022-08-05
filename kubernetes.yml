@@ -34,4 +34,24 @@ spec:
       protocol: TCP
   selector:
     app: sample-spring-boot
-  type: LoadBalancer # Type loadbalancer will use the underlying cloud provider to create an external url for accessing the app
+  type: ClusterIP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: sample-spring-boot
+  namespace: matthew-oberlies
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /spring/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: sample-spring-boot-service
+                port:
+                  number: 8080
