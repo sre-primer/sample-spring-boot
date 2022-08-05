@@ -11,7 +11,7 @@ pipeline {
         stage('build') {
             agent {
                 kubernetes {
-                    label: 'jenkins-spring'
+                    label: 'spring'
                     defaultContainer 'jdk'
                 }
             }
@@ -23,7 +23,7 @@ pipeline {
         stage('sonarqube') {
             agent {
                 kubernetes {
-                    label: 'jenkins-spring'
+                    label: 'spring'
                     defaultContainer 'sonar'
                 }
             }
@@ -35,7 +35,7 @@ pipeline {
         stage('docker build') {
             agent {
                 kubernetes {
-                    label: 'jenkins-spring'
+                    label: 'spring'
                     defaultContainer 'docker'
                 }
             }
@@ -51,7 +51,7 @@ pipeline {
         stage('docker push') {
             agent {
                 kubernetes {
-                    label: 'jenkins-spring'
+                    label: 'spring'
                     defaultContainer 'docker'
                 }
             }
@@ -69,7 +69,7 @@ pipeline {
         stage('Deploy App') {
             agent {
                 kubernetes {
-                    label: 'jenkins-spring'
+                    label: 'spring'
                     defaultContainer 'kubectl'
                 }
             }
