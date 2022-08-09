@@ -4,7 +4,7 @@ pipeline {
         ENV_DOCKER = credentials('dockerhub')
         DOCKERIMAGE = "sample-spring-boot"
         EKS_CLUSTER_NAME = "demo-cluster"
-        SONAR_TOKEN = credentials('sonar-token')
+       // SONAR_TOKEN = credentials('sonar-token')
         image = ''
     }
     stages {
@@ -17,15 +17,15 @@ pipeline {
                 stash includes: 'build/**/*', name: 'build'
             }
         }
-        stage('sonarqube') {
-            agent {
-                docker { image 'sonarsource/sonar-scanner-cli:latest' }
-            }
-            steps {
-                unstash 'build'
-                sh 'sonar-scanner'
-            }
-        }
+        // stage('sonarqube') {
+        //     agent {
+        //         docker { image 'sonarsource/sonar-scanner-cli:latest' }
+        //     }
+        //     steps {
+        //         unstash 'build'
+        //         sh 'sonar-scanner'
+        //     }
+        // }
         stage('docker build') {
             agent any
             steps {
