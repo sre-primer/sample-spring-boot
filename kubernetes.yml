@@ -3,7 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: sample-spring-boot
-  namespace: matthew-oberlies
+  namespace: sarina-joshi
 spec:
   replicas: 1 # 1 PODs at any given point of time
   selector:
@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: springboot-sample
-          image: ikenoxamos/sample-spring-boot:latest
+          image: 5656777/sample-spring-boot:latest
           ports:
             - containerPort: 8080
 ---
@@ -24,7 +24,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: sample-spring-boot-service
-  namespace: matthew-oberlies
+  namespace: sarina-joshi
   labels:
     name: sample-spring-boot
 spec:
