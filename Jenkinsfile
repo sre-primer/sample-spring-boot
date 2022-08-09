@@ -17,15 +17,15 @@ pipeline {
                 stash includes: 'build/**/*', name: 'build'
             }
         }
-        // stage('sonarqube') {
-        //     agent {
-        //         docker { image 'sonarsource/sonar-scanner-cli:latest' }
-        //     }
-        //     steps {
-        //         unstash 'build'
-        //         sh 'sonar-scanner'
-        //     }
-        // }
+        stage('sonarqube') {
+            agent {
+                docker { image 'sonarsource/sonar-scanner-cli:latest' }
+            }
+            steps {
+                unstash 'build'
+                sh 'sonar-scanner'
+            }
+        }
         stage('docker build') {
             agent any
             steps {
